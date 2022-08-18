@@ -20,6 +20,7 @@ To access the Gradle Enterprise API you need to generate a new API token and the
 2. Access "My settings" from the user menu in the top right-hand corner of the page.
 3. Access "Access keys" from the left-hand menu.
 4. Click "Generate" on the right-hand side and copy the generated access key.
+5. Store the token in a file to be used later
 
 To view the permissions assigned to you:
 1. Sign in to Gradle Enterprise.

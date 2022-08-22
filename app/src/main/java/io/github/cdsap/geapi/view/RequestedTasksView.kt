@@ -117,10 +117,6 @@ class RequestedTasksView(private val requestedTasks: RequestedTasks) {
                         cell(filter.url)
                     }
                     row {
-                        cell("Report type")
-                        cell("xxxx")
-                    }
-                    row {
                         cell("MaxBuilds")
                         cell(filter.maxBuilds)
                     }

@@ -153,10 +153,6 @@ class OutcomeView(private val outcome: Outcome) {
                         cell(filter.url)
                     }
                     row {
-                        cell("Report type")
-                        cell("xxxx")
-                    }
-                    row {
                         cell("MaxBuilds")
                         cell(filter.maxBuilds)
                     }

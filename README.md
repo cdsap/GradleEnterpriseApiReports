@@ -11,7 +11,7 @@ After cloning the repository, execute:
 
 Test the binary with:
 ```
-app/build/install/app/bin/app --help
+geapi/build/install/app/bin/geapi --help
 ```
 
 #### Access Key and Permission
@@ -48,14 +48,14 @@ To view the permissions assigned to you:
 
 ##### Getting the report of one build
 ```
- app/build/install/app/bin/app --api-key=FILE_TOKEN \
+ geapi/build/install/app/bin/geapi --api-key=FILE_TOKEN \
         --url=https://ge.acme.dev \
         --max-builds=1
 ```
 
 ##### Report filtering by requested task and tag
 ```
- app/build/install/app/bin/app --api-key=FILE_TOKEN \
+ geapi/build/install/app/bin/geapi --api-key=FILE_TOKEN \
         --url=https://ge.acme.dev \
         --task=assembleDebug
         --tags=local
@@ -63,7 +63,7 @@ To view the permissions assigned to you:
 
 ##### Report including failed builds
 ```
- app/build/install/app/bin/app --api-key=FILE_TOKEN \
+ geapi/build/install/app/bin/geapi --api-key=FILE_TOKEN \
         --url=https://ge.acme.dev \
         --task=assembleDebug \
         --include-failed-builds
@@ -71,14 +71,14 @@ To view the permissions assigned to you:
 
 ##### Report filtering by type of task
 ```
- app/build/install/app/bin/app --api-key=FILE_TOKEN \
+ geapi/build/install/app/bin/geapi --api-key=FILE_TOKEN \
         --url=https://ge.acme.dev \
         --type=com.android.build.gradle.internal.tasks.DexMergingTask
 ```
 
 ##### Filtering since build id
 ```
- app/build/install/app/bin/app --api-key=FILE_TOKEN \
+ geapi/build/install/app/bin/geapi --api-key=FILE_TOKEN \
         --url=https://ge.acme.dev \
         --type=com.android.build.gradle.internal.tasks.DexMergingTask \
         --max-builds=50 \

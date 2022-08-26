@@ -14,7 +14,8 @@ data class Filter(
     var requestedTask: String? = null,
     var tags: List<String> = emptyList(),
     var taskType: String? = null,
-    val initFilter: Long
+    val initFilter: Long,
+    val user: String? = null
 ) {
     init {
         range = if (sinceBuildId == null) {

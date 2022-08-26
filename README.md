@@ -42,6 +42,7 @@ To view the permissions assigned to you:
 | tags                  | Tags                                        | CI, LOCAL | No       | --tags=CI=develop                        |
 | range                 | Initial date for requesting builds          | week      | No       | --range=month                            |
 | since-build-id        | Initial build scan id for requesting builds |           | No       | --since-build-id=xxxxxx                  |
+| user                  | Author of the Build Scan                    |           | No       | --user=marc                              |
 
 
 #### Examples
@@ -83,6 +84,16 @@ To view the permissions assigned to you:
         --type=com.android.build.gradle.internal.tasks.DexMergingTask \
         --max-builds=50 \
         --task=assemble \
+        --since-build-id=xxxxxx
+```
+
+##### Filtering with user
+```
+ geapi/build/install/app/bin/geapi --api-key=FILE_TOKEN \
+        --url=https://ge.acme.dev \
+        --type=com.android.build.gradle.internal.tasks.DexMergingTask \
+        --max-builds=50 \
+        --user=marc \
         --since-build-id=xxxxxx
 ```
 

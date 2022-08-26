@@ -5,5 +5,6 @@ data class ScanWithAttributes(
     val rootProjectName: String,
     val requestedTasks: Array<String>,
     val tags: Array<String>,
-    val hasFailed: Boolean
+    val hasFailed: Boolean,
+    val environment: Environment
 )

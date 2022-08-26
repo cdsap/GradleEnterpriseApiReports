@@ -184,6 +184,13 @@ class OutcomeView(private val outcome: Outcome) {
                             cell(filter.taskType)
                         }
                     }
+                    if (filter.user != null) {
+                        row {
+                            cell("User")
+                            cell(filter.user)
+                        }
+                    }
+
                     row {
                         cell("Total builds processed")
                         cell(outcome.totalBuildsProcessed)

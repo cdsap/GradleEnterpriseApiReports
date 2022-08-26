@@ -40,7 +40,8 @@ class GetBuildScansWithQueryImpl(private val repository: GradleEnterpriseReposit
             scanWithAttributes.requestedTasks,
             filter.requestedTask!!
         )
-        return filterProcessBuildScansFailed && filterProject && filterTags && filterTasks
+        val filterUser = if (filter.user == null) true else scanWithAttributes.environment.username == filter.user
+        return filterProcessBuildScansFailed && filterProject && filterTags && filterTasks && filterUser
     }
 
     private fun tagIsIncluded(filterTags: List<String>, buildTags: List<String>): Boolean {

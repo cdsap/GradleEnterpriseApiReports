@@ -33,6 +33,7 @@ class GEApi : CliktCommand() {
     private val type by option().help(" Task type used by the TaskOutcome report, example: org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
 
     private val task: String? by option().help("[Optional] Task used for filter build scans. In the TaskOutcome report we may want to search only in specific builds, example: assembleDebug")
+    private val user: String? by option()
 
     override fun run() {
 
@@ -49,7 +50,8 @@ class GEApi : CliktCommand() {
                 rangeFilter = range,
                 taskType = type,
                 requestedTask = task,
-                initFilter = System.currentTimeMillis()
+                initFilter = System.currentTimeMillis(),
+                user = user
             )
 
             TaskOutcomeReport(

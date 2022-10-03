@@ -69,7 +69,7 @@ class GEApi : CliktCommand() {
                 }
             }
             is Experiment -> {
-                val repository = GradleRepositoryImpl(GEClient(apiKey.readText(), url))
+                val repository = GradleRepositoryImpl(GEClient(apiKey, url))
 
                 runBlocking {
                     val filter = Filter(

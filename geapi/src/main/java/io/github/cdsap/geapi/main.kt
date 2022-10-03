@@ -29,7 +29,7 @@ class GEApi : CliktCommand() {
         "taskOutcome" to TaskOutcome(), "taskOccurrences" to TaskOccurrences(),
         "experiment" to Experiment()
     )
-    private val apiKey by option().file(mustExist = true).required()
+    private val apiKey : String by option().required()
     private val url by option().required()
     private val maxBuilds by option().int().default(10)
     private val sinceBuildId: String? by option()
@@ -45,7 +45,7 @@ class GEApi : CliktCommand() {
     override fun run() {
         when (val it = report) {
             is TaskOutcome -> {
-                val repository = GradleRepositoryImpl(GEClient(apiKey.readText(), url))
+                val repository = GradleRepositoryImpl(GEClient(apiKey, url))
 
                 runBlocking {
                     val filter = Filter(

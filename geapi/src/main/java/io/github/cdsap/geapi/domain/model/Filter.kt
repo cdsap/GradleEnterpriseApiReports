@@ -15,6 +15,7 @@ data class Filter(
     var tags: List<String> = emptyList(),
     var taskType: String? = null,
     val initFilter: Long,
+    val since: Long? = null,
     val user: String? = null
 ) {
     init {
@@ -28,11 +29,12 @@ data class Filter(
     private fun rangeFilter(rangeFilter: String): Long {
         val cal: Calendar = Calendar.getInstance()
         cal.time = Date()
-        if (rangeFilter == "month") {
-            cal.add(Calendar.MONTH, -1)
-        } else {
-            cal.add(Calendar.WEEK_OF_YEAR, -1)
-        }
+        cal.add(Calendar.HOUR, -2)
+//        if (rangeFilter == "month") {
+//            cal.add(Calendar.MONTH, -1)
+//        } else {
+//            cal.add(Calendar.WEEK_OF_YEAR, -1)
+//        }
         return cal.timeInMillis
     }
 }

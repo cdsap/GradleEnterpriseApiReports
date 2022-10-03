@@ -1,10 +1,9 @@
 package io.github.cdsap.geapi.domain.impl
 
+import com.jakewharton.picnic.TextAlignment
+import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.GetOutcomeReport
-import io.github.cdsap.geapi.domain.model.Filter
-import io.github.cdsap.geapi.domain.model.Outcome
-import io.github.cdsap.geapi.domain.model.ScanWithAttributes
-import io.github.cdsap.geapi.domain.model.Task
+import io.github.cdsap.geapi.domain.model.*
 import io.github.cdsap.geapi.progressbar.ProgressBar
 import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
 

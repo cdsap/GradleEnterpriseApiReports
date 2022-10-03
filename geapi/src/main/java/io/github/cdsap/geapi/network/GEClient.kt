@@ -9,6 +9,7 @@ import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
+import kotlinx.coroutines.runBlocking
 
 class GEClient(private val token: String, geServer: String) {
     val client = createHttpClient()

@@ -2,6 +2,7 @@ package io.github.cdsap.geapi
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
+import com.github.ajalt.clikt.parameters.groups.groupChoice
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.help
@@ -11,6 +12,8 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
+import com.jakewharton.picnic.TextAlignment
+import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.network.GEClient
 import io.github.cdsap.geapi.report.TaskOutcomeReport
@@ -22,6 +25,10 @@ fun main(args: Array<String>) {
 }
 
 class GEApi : CliktCommand() {
+    private val report: ReportConfig? by option().groupChoice(
+        "taskOutcome" to TaskOutcome(), "taskOccurrences" to TaskOccurrences(),
+        "experiment" to Experiment()
+    )
     private val apiKey by option().file(mustExist = true).required()
     private val url by option().required()
     private val maxBuilds by option().int().default(10)
@@ -36,28 +43,59 @@ class GEApi : CliktCommand() {
     private val user: String? by option()
 
     override fun run() {
+        when (val it = report) {
+            is TaskOutcome -> {
+                val repository = GradleRepositoryImpl(GEClient(apiKey.readText(), url))
 
-        val repository = GradleRepositoryImpl(GEClient(apiKey.readText(), url))
+                runBlocking {
+                    val filter = Filter(
+                        url = url,
+                        maxBuilds = maxBuilds,
+                        sinceBuildId = sinceBuildId,
+                        project = project,
+                        includeFailedBuilds = includeFailedBuilds,
+                        tags = tags,
+                        rangeFilter = range,
+                        taskType = type,
+                        requestedTask = task,
+                        initFilter = System.currentTimeMillis(),
+                        user = user
+                    )
 
-        runBlocking {
-            val filter = Filter(
-                url = url,
-                maxBuilds = maxBuilds,
-                sinceBuildId = sinceBuildId,
-                project = project,
-                includeFailedBuilds = includeFailedBuilds,
-                tags = tags,
-                rangeFilter = range,
-                taskType = type,
-                requestedTask = task,
-                initFilter = System.currentTimeMillis(),
-                user = user
-            )
+                    TaskOutcomeReport(
+                        filter = filter,
+                        repository = repository
+                    ).process()
+                }
+            }
+            is Experiment -> {
+                val repository = GradleRepositoryImpl(GEClient(apiKey.readText(), url))
 
-            TaskOutcomeReport(
-                filter = filter,
-                repository = repository
-            ).process()
+                runBlocking {
+                    val filter = Filter(
+                        url = url,
+                        maxBuilds = maxBuilds,
+                        sinceBuildId = sinceBuildId,
+                        project = project,
+                        includeFailedBuilds = includeFailedBuilds,
+                        tags = tags,
+                        rangeFilter = range,
+                        taskType = type,
+                        requestedTask = task,
+                        initFilter = System.currentTimeMillis(),
+                        user = user
+                    )
+
+                    ExperimentReport(
+                        filter = filter,
+                        repository = repository
+                    ).process()
+
+                }
+            }
+            else -> {
+                println("Option not supported")
+            }
         }
     }
 }
@@ -65,3 +103,4 @@ class GEApi : CliktCommand() {
 sealed class ReportConfig(name: String) : OptionGroup(name)
 class TaskOutcome : ReportConfig("Task type duration and occurrences by Outcome. Label: taskOutcome")
 class TaskOccurrences : ReportConfig("Tasks Occurrences: Label: taskOccurrences")
+class Experiment : ReportConfig("Generates Experiment Report")

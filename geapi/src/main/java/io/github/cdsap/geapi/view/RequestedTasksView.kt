@@ -8,7 +8,6 @@ import io.github.cdsap.geapi.domain.model.RequestedTasks
 class RequestedTasksView(private val requestedTasks: RequestedTasks) {
 
     fun print(filter: Filter) {
-        println(filter)
         printReport()
         printReportByTag()
     }

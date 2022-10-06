@@ -57,7 +57,7 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         OS = it.key
                     ),
                     Measurement(
-                        name = "BuildTime Min",
+                        name = "[General] BuildTime Min",
                         variantA = variantABuilds.minBy { it.buildDuration }.buildDuration,
                         variantB = variantBBuilds.minBy { it.buildDuration }.buildDuration,
                         OS = it.key

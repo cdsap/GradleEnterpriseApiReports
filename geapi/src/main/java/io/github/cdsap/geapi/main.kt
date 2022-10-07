@@ -33,6 +33,7 @@ class GEApi : CliktCommand() {
     private val url by option().required()
     private val maxBuilds by option().int().default(10)
     private val sinceBuildId: String? by option()
+    private val experimentId: String? by option()
     private val project: String? by option()
     private val includeFailedBuilds: Boolean by option().flag(default = false)
     private val range by option().choice("week", "month").default("week")
@@ -59,7 +60,8 @@ class GEApi : CliktCommand() {
                         taskType = type,
                         requestedTask = task,
                         initFilter = System.currentTimeMillis(),
-                        user = user
+                        user = user,
+                        experimentId = null
                     )
 
                     TaskOutcomeReport(
@@ -83,7 +85,8 @@ class GEApi : CliktCommand() {
                         taskType = type,
                         requestedTask = task,
                         initFilter = System.currentTimeMillis(),
-                        user = user
+                        user = user,
+                        experimentId = experimentId
                     )
 
                     ExperimentReport(

@@ -16,7 +16,8 @@ data class Filter(
     var taskType: String? = null,
     val initFilter: Long,
     val since: Long? = null,
-    val user: String? = null
+    val user: String? = null,
+    val experimentId : String? = null
 ) {
     init {
         range = if (sinceBuildId == null) {

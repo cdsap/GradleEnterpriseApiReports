@@ -16,12 +16,22 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
             println("Processing build scan cache performance")
 
             builds.map {
-                if (it.tags.contains("experiment") && it.tags.contains("pr")) {
-                    collectBuild(it, buildsa, Experiment.VARIANT_B)
-                } else if (it.tags.contains("experiment") && it.tags.contains("main")) {
-                    collectBuild(it, buildsa, Experiment.VARIANT_A)
+                if(filter.experimentId != null){
+                    if (it.tags.contains(filter.experimentId) && it.tags.contains("pr")) {
+                        collectBuild(it, buildsa, Experiment.VARIANT_B)
+                    } else if (it.tags.contains(filter.experimentId) && it.tags.contains("main")) {
+                        collectBuild(it, buildsa, Experiment.VARIANT_A)
+                    } else {
+                        println("build not under experiments")
+                    }
                 } else {
-                    println("build not under experiments")
+                    if (it.tags.contains("experiment") && it.tags.contains("pr")) {
+                        collectBuild(it, buildsa, Experiment.VARIANT_B)
+                    } else if (it.tags.contains("experiment") && it.tags.contains("main")) {
+                        collectBuild(it, buildsa, Experiment.VARIANT_A)
+                    } else {
+                        println("build not under experiments")
+                    }
                 }
             }
 

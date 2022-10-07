@@ -15,6 +15,7 @@ class GradleRepositoryImpl(private val client: GEClient) : GradleEnterpriseRepos
         } else {
             "since=${filter.range}"
         }
+        println("${client.url}?$filtering&maxBuilds=${filter.maxBuilds}")
         return client.get("${client.url}?$filtering&maxBuilds=${filter.maxBuilds}")
     }
 

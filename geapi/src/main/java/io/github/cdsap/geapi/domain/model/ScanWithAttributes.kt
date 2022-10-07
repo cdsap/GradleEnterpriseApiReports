@@ -7,5 +7,6 @@ data class ScanWithAttributes(
     val tags: Array<String>,
     val hasFailed: Boolean,
     val environment: Environment,
-    val buildDuration: Long
+    val buildDuration: Long,
+    val avoidanceSavingsSummary: AvoidanceSavingsSummary
 )

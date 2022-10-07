@@ -29,6 +29,7 @@ class GEClient(private val token: String, geServer: String) {
     }
 
     suspend inline fun <reified T : Any> get(url: String): T {
-        return client.get(url).body()
+        val x = client.get(url).body() as T
+        return x
     }
 }

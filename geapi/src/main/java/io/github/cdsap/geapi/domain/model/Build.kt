@@ -8,7 +8,8 @@ data class Build(
     var buildDuration: Long = 0L,
     var experiment: Experiment = Experiment.VARIANT_A,
     var OS: OS = io.github.cdsap.geapi.domain.model.OS.MAC,
-    val metrics: MutableMap<String, Any>
+    val metrics: MutableMap<String, Any>,
+    val avoidanceSavingsSummary: AvoidanceSavingsSummary
 )
 
 enum class Experiment {
@@ -21,4 +22,4 @@ enum class OS {
     Linux
 }
 
-data class Measurement(val name: String, val variantA : Any, val variantB: Any, val OS: OS)
+data class Measurement(val category: String, val name: String, val variantA : Any, val variantB: Any, val OS: OS)

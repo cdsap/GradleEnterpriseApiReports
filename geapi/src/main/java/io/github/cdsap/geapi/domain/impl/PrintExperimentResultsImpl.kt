@@ -9,8 +9,9 @@ import kotlin.system.exitProcess
 
 class PrintExperimentResultsImpl(private val repository: GradleEnterpriseRepository) : PrintExperimentResults {
 
-    override suspend fun print(builds: List<ScanWithAttributes>, filter: Filter) {
+    override suspend fun print(builds: List<ScanWithAttributes>, filter: Filter): List<Measurement> {
         val buildsa = mutableListOf<Build>()
+
         if (builds.isNotEmpty()) {
             println("Processing build scan cache performance")
 
@@ -27,37 +28,39 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
         }
         val generalMeasurements = mutableListOf<Measurement>()
 
-        // GENERAL
-
-
         // General metrics
         buildsa.groupBy { it.OS }.forEach {
             val variantABuilds = it.value.filter { it.experiment == Experiment.VARIANT_A }
             val variantBBuilds = it.value.filter { it.experiment == Experiment.VARIANT_B }
+
             generalMeasurements.addAll(
                 listOf(
                     Measurement(
-                        name = "[General] Sample size",
+                        category = "General",
+                        name = "Sample size",
                         variantA = variantABuilds.size,
                         variantB = variantBBuilds.size,
                         OS = it.key
                     ),
 
                     Measurement(
-                        name = "[General] BuildTime Avg",
+                        category = "General",
+                        name = "BuildTime Avg",
                         variantA = variantABuilds.sumOf { it.buildDuration } / variantABuilds.size,
                         variantB = variantBBuilds.sumOf { it.buildDuration } / variantBBuilds.size,
                         OS = it.key
                     ),
 
                     Measurement(
-                        name = "[General] BuildTime Max",
+                        category = "General",
+                        name = "BuildTime Max",
                         variantA = variantABuilds.maxBy { it.buildDuration }.buildDuration,
                         variantB = variantBBuilds.maxBy { it.buildDuration }.buildDuration,
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[General] BuildTime Min",
+                        category = "General",
+                        name = "BuildTime Min",
                         variantA = variantABuilds.minBy { it.buildDuration }.buildDuration,
                         variantB = variantBBuilds.minBy { it.buildDuration }.buildDuration,
                         OS = it.key
@@ -67,60 +70,46 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
             generalMeasurements.addAll(
                 listOf(
                     Measurement(
-                        name = "[Tasks] Tasks",
+                        category = "Tasks",
+                        name = "Tasks",
                         variantA = variantABuilds.sumOf { it.taskExecution.count() },
                         variantB = variantBBuilds.sumOf { it.taskExecution.count() },
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Tasks] Tasks UP-TO-DATE",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_up_to_date" }.count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_up_to_date" }.count()
-                        },
+                        category = "Tasks",
+                        name = "Tasks UP-TO-DATE",
+                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "avoided_up_to_date").count() },
+                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "avoided_up_to_date").count() },
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Tasks] Tasks not cacheable Executed",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable" }.count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable" }.count()
-                        },
+                        category = "Tasks",
+                        name = "Tasks not cacheable Executed",
+                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "executed_not_cacheable").count() },
+                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "executed_not_cacheable").count() },
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Tasks] Tasks cacheable Executed",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_cacheable" }.count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_cacheable" }.count()
-                        },
+                        category = "Tasks",
+                        name = "Tasks cacheable Executed",
+                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "executed_cacheable").count() },
+                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "executed_cacheable").count() },
                         OS = it.key
                     ),
 
                     Measurement(
-                        name = "[Tasks] Tasks from local cache",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_local_cache" }.count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_local_cache" }.count()
-                        },
+                        category = "Tasks",
+                        name = "Tasks from local cache",
+                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "avoided_from_local_cache").count() },
+                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "avoided_from_local_cache").count() },
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Tasks] Tasks from remote cache",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_remote_cache" }.count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_remote_cache" }.count()
-                        },
+                        category = "Tasks",
+                        name = "Tasks from remote cache",
+                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "avoided_from_remote_cache").count() },
+                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "avoided_from_remote_cache").count() },
                         OS = it.key
                     )
                 )
@@ -128,22 +117,31 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
 
 
 
+
+
+
             generalMeasurements.addAll(
                 listOf(
                     Measurement(
-                        name = "[kotlin-compiler] Kotlin Compiler tasks",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler tasks",
                         variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile" }
-                                .count()
+                            tasksByType(
+                                it,
+                                "org.jetbrains.kotlin.gradle.tasks.KotlinCompile"
+                            ).count()
                         },
                         variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile" }
-                                .count()
+                            tasksByType(
+                                it,
+                                "org.jetbrains.kotlin.gradle.tasks.KotlinCompile"
+                            ).count()
                         },
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[kotlin-compiler]  Kotlin Compiler tasks UP-TO-DATE",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler tasks UP-TO-DATE",
                         variantA = variantABuilds.sumOf {
                             it.taskExecution.filter { it.avoidanceOutcome == "avoided_up_to_date" && it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile" }
                                 .count()
@@ -155,7 +153,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[kotlin-compiler]  Kotlin Compiler tasks Executed",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler tasks Executed",
                         variantA = variantABuilds.sumOf {
                             it.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile" }
                                 .count()
@@ -167,7 +166,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[kotlin-compiler]  Kotlin Compiler tasks from local cache",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler tasks from local cache",
                         variantA = variantABuilds.sumOf {
                             it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_local_cache" && it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile" }
                                 .count()
@@ -179,7 +179,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[kotlin-compiler]  Kotlin Compiler tasks from remote cache",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler tasks from remote cache",
                         variantA = variantABuilds.sumOf {
                             it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_remote_cache" && it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile" }
                                 .count()
@@ -191,7 +192,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[kotlin-compiler]  Kotlin Compiler aggregated time",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler aggregated time",
                         variantA = variantABuilds.sumOf {
                             it.taskExecution.filter {
                                 it.taskType == "org.jetbrains.kotlin.gradle.tasks.KotlinCompile"
@@ -207,7 +209,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         OS = it.key
                     ),
                     Measurement(
-                        name = " [kotlin-compiler]  Kotlin Compiler mean task execution",
+                        category = "Kotlin Compiler",
+                        name = "Kotlin Compiler mean task execution",
                         variantA = variantABuilds.sumOf {
                             it.taskExecution.filter {
                                 (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
@@ -239,85 +242,148 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
 
 
 
-        generalMeasurements.addAll(
+            generalMeasurements.addAll(
                 listOf(
                     Measurement(
-                        name = "[Java compiler] Java tasks",
+                        category = "Java Compiler",
+                        name = "Java tasks",
                         variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
+                            tasksByType(
+                                it,
+                                "org.gradle.api.tasks.compile.JavaCompile"
+                            ).count()
                         },
                         variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
+                            tasksByType(
+                                it,
+                                "org.gradle.api.tasks.compile.JavaCompile"
+                            ).count()
                         },
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Java compiler] Java Compiler tasks UP-TO-DATE",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_up_to_date" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_up_to_date" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
+                        category = "Java Compiler",
+                        name = "Java Compiler tasks UP-TO-DATE",
+                        variantA = sumByOutcomeAndType(
+                            variantABuilds,
+                            "avoided_up_to_date",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
+                        variantB = sumByOutcomeAndType(
+                            variantBBuilds,
+                            "avoided_up_to_date",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Java compiler] Java Compiler tasks not cacheable Executed",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
+                        category = "Java Compiler",
+                        name = "Java Compiler tasks not cacheable Executed",
+                        variantA = sumByOutcomeAndType(
+                            variantABuilds,
+                            "executed_not_cacheable",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
+                        variantB = sumByOutcomeAndType(
+                            variantBBuilds,
+                            "executed_not_cacheable",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Java compiler] Java Compiler tasks cacheable Executed",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_cacheable" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "executed_cacheable" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
+                        category = "Java Compiler",
+                        name = "Java Compiler tasks cacheable Executed",
+                        variantA = sumByOutcomeAndType(
+                            variantABuilds,
+                            "executed_cacheable",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
+                        variantB = sumByOutcomeAndType(
+                            variantBBuilds,
+                            "executed_cacheable",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Java compiler] Java Compiler tasks from local cache",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_local_cache" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_local_cache" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
+                        category = "Java Compiler",
+                        name = "Java Compiler tasks from local cache",
+                        variantA = sumByOutcomeAndType(
+                            variantABuilds,
+                            "avoided_from_local_cache",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
+                        variantB = sumByOutcomeAndType(
+                            variantBBuilds,
+                            "avoided_from_local_cache",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
                         OS = it.key
                     ),
                     Measurement(
-                        name = "[Java compiler] Java Compiler tasks from remote cache",
-                        variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_remote_cache" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
-                        variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter { it.avoidanceOutcome == "avoided_from_remote_cache" && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
-                                .count()
-                        },
+                        category = "Java Compiler",
+                        name = "Java Compiler tasks from remote cache",
+                        variantA = sumByOutcomeAndType(
+                            variantABuilds,
+                            "avoided_from_remote_cache",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
+                        variantB = sumByOutcomeAndType(
+                            variantBBuilds,
+                            "avoided_from_remote_cache",
+                            "org.gradle.api.tasks.compile.JavaCompile"
+                        ),
                         OS = it.key
                     )
                 )
             )
+
+
+//            generalMeasurements.add(
+//                Measurement(
+//                    category = "Avoidance Savings",
+//                    name = "Total",
+//                    variantA = variantABuilds.sumOf {
+//                        it.avoidanceSavingsSummary?.total?.toInt() ?: 0
+//                    } / variantABuilds.size,
+//                    variantB = variantBBuilds.sumOf {
+//                        it.avoidanceSavingsSummary?.total?.toInt() ?: 0
+//                    } / variantABuilds.size,
+//                    OS = it.key
+//                )
+//            )
+//            generalMeasurements.add(
+//                Measurement(
+//                    category = "Avoidance Savings",
+//                    name = "Remote Cache",
+//                    variantA = variantABuilds.sumOf {
+//                        it.avoidanceSavingsSummary?.remoteCache?.toInt() ?: 0
+//                    } / variantABuilds.size,
+//                    variantB = variantBBuilds.sumOf {
+//                        it.avoidanceSavingsSummary?.remoteCache?.toInt() ?: 0
+//                    } / variantABuilds.size,
+//                    OS = it.key
+//                )
+//            )
+//            generalMeasurements.add(
+//                Measurement(
+//                    category = "Avoidance Savings",
+//                    name = "Ratio",
+//                    variantA = variantABuilds.sumOf {
+//                        it.avoidanceSavingsSummary?.ratio?.toInt() ?: 0
+//                    } / variantABuilds.size,
+//                    variantB = variantBBuilds.sumOf {
+//                        it.avoidanceSavingsSummary?.ratio?.toInt() ?: 0
+//                    } / variantABuilds.size,
+//                    OS = it.key
+//                )
+//            )
+//
+//        }
+
+
         }
-
-
 
         println(
             table
@@ -330,8 +396,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                 }
                 body {
                     row {
-                        cell("Executions by outcome") {
-                            columnSpan = 3
+                        cell("Experiment") {
+                            columnSpan = 4
                             alignment = TextAlignment.MiddleCenter
                         }
                     }
@@ -341,23 +407,19 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     }.forEach {
                         row {
                             cell(it.key.name) {
-                                columnSpan = 3
+                                columnSpan = 4
                                 alignment = TextAlignment.MiddleCenter
                             }
                         }
                         row {
-                            cell("Metric") {
-
-                            }
-                            cell("VARIANT A") {
-
-                            }
-                            cell("VARIANT B") {
-
-                            }
+                            cell("Category")
+                            cell("Metric")
+                            cell("VARIANT A")
+                            cell("VARIANT B")
                         }
                         it.value.forEach {
                             row {
+                                cell(it.category)
                                 cell(it.name)
                                 cell(it.variantA)
                                 cell(it.variantB)
@@ -365,47 +427,23 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                         }
                     }
                 }
-//                taskGeneralMeasurements.groupBy {
-//                    it.OS
-//                }.forEach {
-//                    it.value.forEach {
-//                        row {
-//
-//
-//                            cell(it.name)
-//                            cell(it.variantA)
-//                            cell(it.variantB)
-//                        }
-//                    }
-//                }
-//                kotlinCompilerMeasurements.groupBy {
-//                    it.OS
-//                }.forEach {
-//                    it.value.forEach {
-//                        row {
-//
-//                            cell(it.name)
-//                            cell(it.variantA)
-//                            cell(it.variantB)
-//                        }
-//                    }
-//                }
-//                javaCompilerMeasurements.groupBy {
-//                    it.OS
-//                }.forEach {
-//                    it.value.forEach {
-//                        row {
-//
-//                            cell(it.name)
-//                            cell(it.variantA)
-//                            cell(it.variantB)
-//                        }
-//                    }
-//                }
-//            }
+
             })
+        return generalMeasurements
 
     }
+
+    fun sumByOutcomeAndType(builds: List<Build>, outcome: String, type: String): Int {
+        return builds.sumOf {
+            it.taskExecution.filter { it.avoidanceOutcome == outcome && it.taskType == type }.count()
+        }
+    }
+
+    private fun tasksByOutcome(it: Build, outcome: String) =
+        it.taskExecution.filter { it.avoidanceOutcome == outcome }
+
+    private fun tasksByType(it: Build, type: String) =
+        it.taskExecution.filter { it.taskType == type }
 
     private suspend fun collectBuild(
         it: ScanWithAttributes,

@@ -5,7 +5,6 @@ import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.PrintExperimentResults
 import io.github.cdsap.geapi.domain.model.*
 import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
-import kotlin.system.exitProcess
 
 class PrintExperimentResultsImpl(private val repository: GradleEnterpriseRepository) : PrintExperimentResults {
 
@@ -95,19 +94,13 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     ),
                     Measurement(
                         category = "Tasks",
-                        name = "Tasks not cacheable Executed",
-                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "executed_not_cacheable").count() },
-                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "executed_not_cacheable").count() },
+                        name = "Tasks Executed",
+                        variantA = variantABuilds.sumOf {  it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable"
+                            || it.avoidanceOutcome == "executed_cacheable" }.count() },
+                        variantB = variantBBuilds.sumOf {  it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable"
+                            || it.avoidanceOutcome == "executed_cacheable" }.count() },
                         OS = it.key
                     ),
-                    Measurement(
-                        category = "Tasks",
-                        name = "Tasks cacheable Executed",
-                        variantA = variantABuilds.sumOf { tasksByOutcome(it, "executed_cacheable").count() },
-                        variantB = variantBBuilds.sumOf { tasksByOutcome(it, "executed_cacheable").count() },
-                        OS = it.key
-                    ),
-
                     Measurement(
                         category = "Tasks",
                         name = "Tasks from local cache",
@@ -124,11 +117,6 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     )
                 )
             )
-
-
-
-
-
 
             generalMeasurements.addAll(
                 listOf(
@@ -288,32 +276,15 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     ),
                     Measurement(
                         category = "Java Compiler",
-                        name = "Java Compiler tasks not cacheable Executed",
-                        variantA = sumByOutcomeAndType(
-                            variantABuilds,
-                            "executed_not_cacheable",
-                            "org.gradle.api.tasks.compile.JavaCompile"
-                        ),
-                        variantB = sumByOutcomeAndType(
-                            variantBBuilds,
-                            "executed_not_cacheable",
-                            "org.gradle.api.tasks.compile.JavaCompile"
-                        ),
-                        OS = it.key
-                    ),
-                    Measurement(
-                        category = "Java Compiler",
-                        name = "Java Compiler tasks cacheable Executed",
-                        variantA = sumByOutcomeAndType(
-                            variantABuilds,
-                            "executed_cacheable",
-                            "org.gradle.api.tasks.compile.JavaCompile"
-                        ),
-                        variantB = sumByOutcomeAndType(
-                            variantBBuilds,
-                            "executed_cacheable",
-                            "org.gradle.api.tasks.compile.JavaCompile"
-                        ),
+                        name = "Java Compiler tasks Executed",
+                        variantA = variantABuilds.sumOf {
+                            it.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
+                                .count()
+                        },
+                        variantB = variantBBuilds.sumOf {
+                            it.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
+                                .count()
+                        },
                         OS = it.key
                     ),
                     Measurement(
@@ -344,6 +315,50 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                             "avoided_from_remote_cache",
                             "org.gradle.api.tasks.compile.JavaCompile"
                         ),
+                        OS = it.key
+                    ),
+                    Measurement(
+                        category = "Java Compiler",
+                        name = "Java Compiler aggregated time",
+                        variantA = variantABuilds.sumOf {
+                            it.taskExecution.filter {
+                                it.taskType == "org.gradle.api.tasks.compile.JavaCompile"
+                            }
+                                .sumOf { it.duration }
+                        },
+                        variantB = variantBBuilds.sumOf {
+                            it.taskExecution.filter {
+                                it.taskType == "org.gradle.api.tasks.compile.JavaCompile"
+                            }
+                                .sumOf { it.duration }
+                        },
+                        OS = it.key
+                    ),
+                    Measurement(
+                        category = "Java Compiler",
+                        name = "Java Compiler mean task execution",
+                        variantA = variantABuilds.sumOf {
+                            it.taskExecution.filter {
+                                (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
+                                    && it.taskType == "org.gradle.api.tasks.compile.JavaCompile"
+                            }
+                                .sumOf { it.duration }
+                        } / (
+                            variantABuilds.sumOf {
+                                it.taskExecution.filter { it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
+                                    .count()
+                            }),
+                        variantBBuilds.sumOf {
+                            it.taskExecution.filter {
+                                (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
+                                    && it.taskType == "org.gradle.api.tasks.compile.JavaCompile"
+                            }
+                                .sumOf { it.duration }
+                        } / (
+                            variantBBuilds.sumOf {
+                                it.taskExecution.filter { it.taskType == "org.gradle.api.tasks.compile.JavaCompile" }
+                                    .count()
+                            }),
                         OS = it.key
                     )
                 )

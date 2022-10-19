@@ -458,13 +458,31 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                                 cell(it.name)
                                 cell(it.variantA)
                                 cell(it.variantB)
-                                val a = it.variantA as Int
-                                val b = it.variantB as Int
-                                if (a - b != 0 ){
-                                    val x = (b * 100)/a
-                                    cell(x)
+                                if (it.variantA is Int) {
+                                    if ((it.variantA as Int) - (it.variantB as Int) != 0) {
+                                        val x = (it.variantB * 100) / it.variantA
+                                        cell(x)
+                                    } else {
+                                        cell("")
+                                    }
+
+                                } else if (it.variantA is Long) {
+                                    if ((it.variantA as Long) - (it.variantB as Long) != 0L) {
+                                        val x = (it.variantB * 100L) / it.variantA
+                                        cell(x)
+                                    } else {
+                                        cell("")
+                                    }
+
+                                } else if (it.variantA is Double) {
+                                    if ((it.variantA as Double) - (it.variantB as Double) != 0.0) {
+                                        val x = (it.variantB * 100.0) / it.variantA
+                                        cell(x)
+                                    } else {
+                                        cell("")
+                                    }
                                 } else {
-                                    cell("")
+
                                 }
 
 

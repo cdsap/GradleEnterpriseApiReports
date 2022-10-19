@@ -5,6 +5,7 @@ import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.PrintExperimentResults
 import io.github.cdsap.geapi.domain.model.*
 import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
+import kotlin.math.roundToInt
 
 class PrintExperimentResultsImpl(private val repository: GradleEnterpriseRepository) : PrintExperimentResults {
 
@@ -15,7 +16,7 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
             println("Processing build scan cache performance")
 
             builds.map {
-                if(filter.experimentId != null){
+                if (filter.experimentId != null) {
                     if (it.tags.contains(filter.experimentId) && it.tags.contains("pr")) {
                         collectBuild(it, buildsa, Experiment.VARIANT_B)
                     } else if (it.tags.contains(filter.experimentId) && it.tags.contains("main")) {
@@ -95,10 +96,18 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     Measurement(
                         category = "Tasks",
                         name = "Tasks Executed",
-                        variantA = variantABuilds.sumOf {  it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable"
-                            || it.avoidanceOutcome == "executed_cacheable" }.count() },
-                        variantB = variantBBuilds.sumOf {  it.taskExecution.filter { it.avoidanceOutcome == "executed_not_cacheable"
-                            || it.avoidanceOutcome == "executed_cacheable" }.count() },
+                        variantA = variantABuilds.sumOf {
+                            it.taskExecution.filter {
+                                it.avoidanceOutcome == "executed_not_cacheable"
+                                    || it.avoidanceOutcome == "executed_cacheable"
+                            }.count()
+                        },
+                        variantB = variantBBuilds.sumOf {
+                            it.taskExecution.filter {
+                                it.avoidanceOutcome == "executed_not_cacheable"
+                                    || it.avoidanceOutcome == "executed_cacheable"
+                            }.count()
+                        },
                         OS = it.key
                     ),
                     Measurement(
@@ -441,6 +450,7 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                             cell("Metric")
                             cell("VARIANT A")
                             cell("VARIANT B")
+                            cell("Delta")
                         }
                         it.value.forEach {
                             row {
@@ -448,6 +458,16 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                                 cell(it.name)
                                 cell(it.variantA)
                                 cell(it.variantB)
+                                val a = it.variantA as Double
+                                val b = it.variantB as Double
+                                if (a - b != 0.0 ){
+                                    val x = (b * 100)/a
+                                    cell(x.roundToInt())
+                                } else {
+                                    cell("")
+                                }
+
+
                             }
                         }
                     }

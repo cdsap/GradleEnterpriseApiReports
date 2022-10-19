@@ -21,7 +21,7 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     } else if (it.tags.contains(filter.experimentId) && it.tags.contains("main")) {
                         collectBuild(it, buildsa, Experiment.VARIANT_A)
                     } else {
-                        println("build not under experiments")
+
                     }
                 } else {
                     if (it.tags.contains("experiment") && it.tags.contains("pr")) {
@@ -29,7 +29,7 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     } else if (it.tags.contains("experiment") && it.tags.contains("main")) {
                         collectBuild(it, buildsa, Experiment.VARIANT_A)
                     } else {
-                        println("build not under experiments")
+
                     }
                 }
             }

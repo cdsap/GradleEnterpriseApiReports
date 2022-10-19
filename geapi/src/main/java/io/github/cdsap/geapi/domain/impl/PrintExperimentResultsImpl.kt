@@ -441,7 +441,7 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                     }.forEach {
                         row {
                             cell(it.key.name) {
-                                columnSpan = 4
+                                columnSpan = 5
                                 alignment = TextAlignment.MiddleCenter
                             }
                         }
@@ -458,11 +458,11 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                                 cell(it.name)
                                 cell(it.variantA)
                                 cell(it.variantB)
-                                val a = it.variantA as Double
-                                val b = it.variantB as Double
-                                if (a - b != 0.0 ){
+                                val a = it.variantA as Int
+                                val b = it.variantB as Int
+                                if (a - b != 0 ){
                                     val x = (b * 100)/a
-                                    cell(x.roundToInt())
+                                    cell(x)
                                 } else {
                                     cell("")
                                 }

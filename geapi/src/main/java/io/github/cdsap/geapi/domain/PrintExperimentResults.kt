@@ -6,5 +6,5 @@ import io.github.cdsap.geapi.domain.model.ScanWithAttributes
 
 interface PrintExperimentResults {
 
-    suspend fun print(measurements: List<Measurement>)
+    fun print(measurements: List<Measurement>)
 }

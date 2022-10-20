@@ -4,7 +4,7 @@ import io.github.cdsap.geapi.domain.GetMeasurements
 import io.github.cdsap.geapi.domain.model.*
 import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
 
-class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasurements{
+class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasurements {
     override suspend fun get(builds: List<ScanWithAttributes>, filter: Filter): List<Measurement> {
         val buildsa = mutableListOf<Build>()
 
@@ -34,7 +34,6 @@ class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasu
         }
         val generalMeasurements = mutableListOf<Measurement>()
 
-        // General metrics
         buildsa.groupBy { it.OS }.forEach {
             val variantABuilds = it.value.filter { it.experiment == Experiment.VARIANT_A }
             val variantBBuilds = it.value.filter { it.experiment == Experiment.VARIANT_B }
@@ -47,11 +46,7 @@ class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasu
                         variantA = variantABuilds.size,
                         variantB = variantBBuilds.size,
                         OS = it.key
-                        // ,
-                        //delta = diff(v)
-
                     ),
-
                     Measurement(
                         category = "General",
                         name = "BuildTime Avg",

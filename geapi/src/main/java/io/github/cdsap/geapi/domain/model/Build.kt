@@ -25,7 +25,7 @@ enum class OS {
 class Measurement(
     val category: String, val name: String, val variantA: Any, val variantB: Any, val OS: OS
 ) {
-    fun diff() : Any {
+    fun diff(): Any {
         if (variantA is Int) {
             if ((variantA as Int) - (variantB as Int) != 0) {
                 val x = (variantB * 100) / variantA
@@ -53,6 +53,7 @@ class Measurement(
         } else {
 
         }
+        return ""
     }
 
 }

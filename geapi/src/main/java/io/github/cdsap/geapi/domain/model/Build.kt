@@ -22,4 +22,37 @@ enum class OS {
     Linux
 }
 
-data class Measurement(val category: String, val name: String, val variantA : Any, val variantB: Any, val OS: OS)
+class Measurement(
+    val category: String, val name: String, val variantA: Any, val variantB: Any, val OS: OS
+) {
+    fun diff() : Any {
+        if (variantA is Int) {
+            if ((variantA as Int) - (variantB as Int) != 0) {
+                val x = (variantB * 100) / variantA
+                return x
+            } else {
+                return ""
+            }
+
+        } else if (variantA is Long) {
+            if ((variantA as Long) - (variantB as Long) != 0L) {
+                val x = (variantB * 100L) / variantA
+                return x
+            } else {
+                return ""
+            }
+
+        } else if (variantA is Double) {
+            if ((variantA as Double) - (variantB as Double) != 0.0) {
+                val x = (variantB * 100.0) / variantA
+                val result = 100 - x
+                return "$result%"
+            } else {
+                return ""
+            }
+        } else {
+
+        }
+    }
+
+}

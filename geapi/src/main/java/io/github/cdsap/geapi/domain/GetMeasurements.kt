@@ -4,7 +4,6 @@ import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.domain.model.Measurement
 import io.github.cdsap.geapi.domain.model.ScanWithAttributes
 
-interface PrintExperimentResults {
-
-    suspend fun print(measurements: List<Measurement>)
+interface GetMeasurements {
+    suspend fun get(builds: List<ScanWithAttributes>, filter: Filter): List<Measurement>
 }

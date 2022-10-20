@@ -20,7 +20,7 @@ class PrintExperimentResultsImpl
             body {
                 row {
                     cell("Experiment") {
-                        columnSpan = 4
+                        columnSpan = 5
                         alignment = TextAlignment.MiddleCenter
                     }
                 }
@@ -47,7 +47,9 @@ class PrintExperimentResultsImpl
                             cell(it.name)
                             cell(it.variantA)
                             cell(it.variantB)
-                            cell(it.diff())
+                            cell(it.diff()) {
+                                alignment = TextAlignment.MiddleRight
+                            }
                         }
                     }
                 }

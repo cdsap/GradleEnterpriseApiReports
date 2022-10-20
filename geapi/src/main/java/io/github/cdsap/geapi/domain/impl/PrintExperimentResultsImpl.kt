@@ -477,7 +477,8 @@ class PrintExperimentResultsImpl(private val repository: GradleEnterpriseReposit
                                 } else if (it.variantA is Double) {
                                     if ((it.variantA as Double) - (it.variantB as Double) != 0.0) {
                                         val x = (it.variantB * 100.0) / it.variantA
-                                        cell(x)
+                                        val result = 100 - x
+                                        cell("$result%"  )
                                     } else {
                                         cell("")
                                     }

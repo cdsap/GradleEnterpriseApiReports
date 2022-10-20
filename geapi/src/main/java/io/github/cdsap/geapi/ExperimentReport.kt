@@ -13,7 +13,7 @@ class ExperimentReport(val filter: Filter, val repository: GradleRepositoryImpl)
 
     suspend fun process() {
         val getBuildScans = GetBuildScansWithQueryImpl(repository)
-        val getReport = PrintExperimentResultsImpl(repository)
+        val getReport = PrintExperimentResultsImpl()
         val measurements = GetMeasurementsImpl(repository)
         val buildScansFiltered = getBuildScans.get(filter)
         getReport.print(measurements.get(buildScansFiltered, filter))

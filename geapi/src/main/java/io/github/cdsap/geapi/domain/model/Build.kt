@@ -29,7 +29,8 @@ class Measurement(
         if (variantA is Int) {
             if ((variantA as Int) - (variantB as Int) != 0) {
                 val x = (variantB * 100) / variantA
-                return x
+                val result = 100 - x
+                return "$result%"
             } else {
                 return ""
             }
@@ -37,7 +38,8 @@ class Measurement(
         } else if (variantA is Long) {
             if ((variantA as Long) - (variantB as Long) != 0L) {
                 val x = (variantB * 100L) / variantA
-                return x
+                val result = 100L - x
+                return "$result%"
             } else {
                 return ""
             }

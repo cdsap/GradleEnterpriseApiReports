@@ -19,7 +19,7 @@ class ExperimentResultView
             body {
                 row {
                     cell("Experiment") {
-                        columnSpan = 5
+                        columnSpan = 3
                         alignment = TextAlignment.MiddleCenter
                     }
                 }
@@ -29,7 +29,7 @@ class ExperimentResultView
                 }.forEach {
                     row {
                         cell(it.key.name) {
-                            columnSpan = 5
+                            columnSpan = 3
                             alignment = TextAlignment.MiddleCenter
                         }
                     }

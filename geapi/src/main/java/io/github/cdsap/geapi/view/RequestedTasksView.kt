@@ -5,9 +5,9 @@ import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.domain.model.RequestedTasks
 
-class RequestedTasksView(private val requestedTasks: RequestedTasks) {
+class RequestedTasksView(private val requestedTasks: RequestedTasks) : View<Filter>{
 
-    fun print(filter: Filter) {
+    override fun print(filter: Filter) {
         printReport()
         printReportByTag()
     }

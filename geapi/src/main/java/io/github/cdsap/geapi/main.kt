@@ -10,14 +10,12 @@ import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
-import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
-import com.jakewharton.picnic.TextAlignment
-import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.network.GEClient
 import io.github.cdsap.geapi.report.TaskOutcomeReport
 import io.github.cdsap.geapi.repository.impl.GradleRepositoryImpl
+import io.github.cdsap.geapi.report.ExperimentReport
 import kotlinx.coroutines.runBlocking
 
 fun main(args: Array<String>) {

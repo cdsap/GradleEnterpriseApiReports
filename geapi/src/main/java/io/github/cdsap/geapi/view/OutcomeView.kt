@@ -6,9 +6,9 @@ import io.github.cdsap.geapi.domain.model.Detector
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.domain.model.Outcome
 
-class OutcomeView(private val outcome: Outcome) {
+class OutcomeView(private val outcome: Outcome) : View<Filter> {
 
-    fun print(filter: Filter) {
+    override fun print(filter: Filter) {
         printlnReport(filter)
         printReport()
         printReportByTask()

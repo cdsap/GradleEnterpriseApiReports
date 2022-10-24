@@ -1,12 +1,11 @@
-package io.github.cdsap.geapi.domain.impl
+package io.github.cdsap.geapi.view
 
 import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.table
-import io.github.cdsap.geapi.domain.PrintExperimentResults
 import io.github.cdsap.geapi.domain.model.*
 
-class PrintExperimentResultsImpl
-    : PrintExperimentResults {
+class ExperimentResultView
+    : View<List<Measurement>> {
 
     override fun print(measurement: List<Measurement>) {
 
@@ -41,7 +40,9 @@ class PrintExperimentResultsImpl
                         cell("VARIANT B")
                         cell("Delta")
                     }
-                    it.value.forEach {
+                    it.value.filter {
+                        it.diff() != ""
+                    }.forEach {
                         row {
                             cell(it.category)
                             cell(it.name)

@@ -1,9 +1,11 @@
 package io.github.cdsap.geapi.domain
 
-import io.github.cdsap.geapi.domain.model.Filter
+import io.github.cdsap.geapi.domain.model.Build
 import io.github.cdsap.geapi.domain.model.Measurement
-import io.github.cdsap.geapi.domain.model.ScanWithAttributes
 
 interface GetMeasurements {
-    suspend fun get(builds: List<ScanWithAttributes>, filter: Filter): List<Measurement>
+    fun get(builds: List<Build>): List<Measurement>
+
+    fun tasksByType(it: Build, type: String) = it.taskExecution.filter { it.taskType == type }
+
 }

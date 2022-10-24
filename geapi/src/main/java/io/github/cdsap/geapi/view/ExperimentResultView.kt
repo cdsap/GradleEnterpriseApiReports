@@ -36,8 +36,8 @@ class ExperimentResultView
                     row {
                         cell("Category")
                         cell("Metric")
-                        cell("VARIANT A")
-                        cell("VARIANT B")
+                //        cell("VARIANT A")
+                //        cell("VARIANT B")
                         cell("Delta")
                     }
                     it.value.filter {
@@ -46,8 +46,8 @@ class ExperimentResultView
                         row {
                             cell(it.category)
                             cell(it.name)
-                            cell(it.variantA)
-                            cell(it.variantB)
+                  //          cell(it.variantA)
+                  //          cell(it.variantB)
                             cell(it.diff()) {
                                 alignment = TextAlignment.MiddleRight
                             }

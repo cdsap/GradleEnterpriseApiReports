@@ -5,9 +5,9 @@ import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.repository.impl.GradleRepositoryImpl
 import io.github.cdsap.geapi.view.ExperimentResultView
 
-class ExperimentReport(val filter: Filter, val repository: GradleRepositoryImpl) {
+class ExperimentReport(val filter: Filter, val repository: GradleRepositoryImpl) : Report {
 
-    suspend fun process() {
+    override suspend fun process() {
 
         val buildScansFiltered = GetBuildScansWithQueryImpl(repository).get(filter)
         val buildsExperiment = FilterExperimentsImpl(repository).filter(buildScansFiltered, filter)

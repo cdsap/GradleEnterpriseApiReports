@@ -9,8 +9,8 @@ import io.github.cdsap.geapi.view.RequestedTasksView
 class RequestedTasksReport(
     val filter: Filter,
     val repository: GradleEnterpriseRepository
-) {
-    suspend fun process() {
+) : Report {
+    override suspend fun process() {
         val getBuildScans = GetBuildScansWithQueryImpl(repository).get(filter)
         val requestedTasks = GetRequestedTasksImpl().get(getBuildScans, filter.tags)
         RequestedTasksView(requestedTasks).print(filter)

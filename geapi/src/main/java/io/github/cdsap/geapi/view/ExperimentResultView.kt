@@ -13,8 +13,8 @@ class ExperimentResultView
             cellStyle {
                 border = true
                 alignment = TextAlignment.MiddleLeft
-                paddingLeft = 2
-                paddingRight = 2
+                paddingLeft = 1
+                paddingRight = 1
             }
             body {
                 row {

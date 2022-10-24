@@ -1,12 +1,12 @@
 package io.github.cdsap.geapi.domain.impl
 
-import io.github.cdsap.geapi.domain.GetBuildScansWithQuery
+import io.github.cdsap.geapi.domain.GetBuildScansWithFilter
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.domain.model.ScanWithAttributes
 import io.github.cdsap.geapi.progressbar.ProgressBar
 import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
 
-class GetBuildScansWithQueryImpl(private val repository: GradleEnterpriseRepository) : GetBuildScansWithQuery {
+class GetBuildScansWithQueryImpl(private val repository: GradleEnterpriseRepository) : GetBuildScansWithFilter {
 
     override suspend fun get(filter: Filter): List<ScanWithAttributes> {
         println("Getting Build Scans")

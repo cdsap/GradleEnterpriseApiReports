@@ -19,7 +19,7 @@ class ExperimentResultView
             body {
                 row {
                     cell("Experiment") {
-                        columnSpan = 3
+                        columnSpan = 5
                         alignment = TextAlignment.MiddleCenter
                     }
                 }
@@ -29,15 +29,15 @@ class ExperimentResultView
                 }.forEach {
                     row {
                         cell(it.key.name) {
-                            columnSpan = 3
+                            columnSpan = 5
                             alignment = TextAlignment.MiddleCenter
                         }
                     }
                     row {
                         cell("Category")
                         cell("Metric")
-                //        cell("VARIANT A")
-                //        cell("VARIANT B")
+                        cell("VARIANT A")
+                        cell("VARIANT B")
                         cell("Delta")
                     }
                     it.value.filter {
@@ -46,8 +46,8 @@ class ExperimentResultView
                         row {
                             cell(it.category)
                             cell(it.name)
-                  //          cell(it.variantA)
-                  //          cell(it.variantB)
+                            cell(it.variantA)
+                            cell(it.variantB)
                             cell(it.diff()) {
                                 alignment = TextAlignment.MiddleRight
                             }

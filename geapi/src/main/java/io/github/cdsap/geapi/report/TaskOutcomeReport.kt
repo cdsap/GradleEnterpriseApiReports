@@ -9,9 +9,9 @@ import io.github.cdsap.geapi.view.OutcomeView
 class TaskOutcomeReport(
     val filter: Filter,
     val repository: GradleEnterpriseRepository
-) {
+) : Report {
 
-    suspend fun process() {
+    override suspend fun process() {
         val getBuildScans = GetBuildScansWithQueryImpl(repository)
         val getOutcome = GetOutcomeReportImpl(repository)
         val buildScansFiltered = getBuildScans.get(filter)

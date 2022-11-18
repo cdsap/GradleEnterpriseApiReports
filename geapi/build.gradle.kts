@@ -35,6 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.0.3")
     implementation("io.ktor:ktor-client-auth:2.0.3")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.3")
+    implementation("org.nield:kotlin-statistics:1.2.1")
     implementation("io.ktor:ktor-serialization-gson:2.0.3")
     implementation("com.jakewharton.picnic:picnic:0.6.0")
     implementation("com.github.ajalt.clikt:clikt:3.5.0")

@@ -5,10 +5,12 @@ import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.model.Detector
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.domain.model.Outcome
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
-class OutcomeView(private val outcome: Outcome) {
+class OutcomeView(private val outcome: Outcome) : View<Filter> {
 
-    fun print(filter: Filter) {
+    override fun print(filter: Filter) {
         printlnReport(filter)
         printReport()
         printReportByTask()
@@ -110,7 +112,7 @@ class OutcomeView(private val outcome: Outcome) {
                     outcome.durationByOutcome.forEach { (t, u) ->
                         row {
                             cell(t)
-                            cell(readableDuration(u))
+                            cell(u.toDuration(DurationUnit.MILLISECONDS))
                         }
                     }
                     row {
@@ -121,7 +123,7 @@ class OutcomeView(private val outcome: Outcome) {
                     outcome.durationByOutcome.forEach { (t, u) ->
                         row {
                             cell(t)
-                            cell(readableDuration(u / outcome.occurrencesByOutcome[t]!!))
+                            cell((u / outcome.occurrencesByOutcome[t]!!).toDuration(DurationUnit.MILLISECONDS))
                         }
                     }
                 }
@@ -202,24 +204,10 @@ class OutcomeView(private val outcome: Outcome) {
 
                     row {
                         cell("Duration")
-                        cell(readableDuration(duration))
+                        cell(duration.toDuration(DurationUnit.MILLISECONDS))
                     }
                 }
             }
         )
-    }
-
-    private fun readableDuration(duration: Long): String {
-        val minutes = duration / 1000 / 60
-        val seconds = duration / 1000 % 60
-        return if (minutes == 0L) {
-            if (seconds == 0L) {
-                "$duration milliseconds"
-            } else {
-                "$seconds seconds"
-            }
-        } else {
-            "$minutes minutes and $seconds seconds"
-        }
     }
 }

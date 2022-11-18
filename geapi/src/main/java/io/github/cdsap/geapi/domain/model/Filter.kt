@@ -5,10 +5,10 @@ import java.util.Date
 
 data class Filter(
     val url: String,
-    val maxBuilds: Int,
+    var maxBuilds: Int = 50,
     var range: Long? = null,
     val rangeFilter: String,
-    val sinceBuildId: String? = null,
+    var sinceBuildId: String? = null,
     val project: String? = null,
     val includeFailedBuilds: Boolean = false,
     var requestedTask: String? = null,
@@ -17,7 +17,9 @@ data class Filter(
     val initFilter: Long,
     val since: Long? = null,
     val user: String? = null,
-    val experimentId : String? = null
+    val experimentId: String? = null,
+    val buildSystem: String = "gradle",
+    val concurrentCalls: Int
 ) {
     init {
         range = if (sinceBuildId == null) {
@@ -29,13 +31,18 @@ data class Filter(
 
     private fun rangeFilter(rangeFilter: String): Long {
         val cal: Calendar = Calendar.getInstance()
-        cal.time = Date()
-        cal.add(Calendar.HOUR, -2)
-//        if (rangeFilter == "month") {
-//            cal.add(Calendar.MONTH, -1)
-//        } else {
-//            cal.add(Calendar.WEEK_OF_YEAR, -1)
-//        }
-        return cal.timeInMillis
+        if (experimentId != null) {
+            cal.time = Date()
+            cal.add(Calendar.HOUR, -2)
+            return cal.timeInMillis
+        } else {
+
+            if (rangeFilter == "month") {
+                cal.add(Calendar.MONTH, -1)
+            } else {
+                cal.add(Calendar.WEEK_OF_YEAR, -1)
+            }
+            return cal.timeInMillis
+        }
     }
 }

@@ -25,8 +25,6 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
                         collectBuild(it, buildsFiltered, Experiment.VARIANT_B)
                     } else if (it.tags.contains("experiment") && it.tags.contains("main")) {
                         collectBuild(it, buildsFiltered, Experiment.VARIANT_A)
-                    } else {
-
                     }
                 }
             }
@@ -37,7 +35,7 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
 
     private suspend fun collectBuild(
         it: ScanWithAttributes,
-        buildsa: MutableList<Build>,
+        builds: MutableList<Build>,
         experiment: Experiment
     ) {
         var os = if (it.tags.contains("Mac OS X")) {
@@ -55,7 +53,7 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
             cachePerformance.tags = it.tags
             cachePerformance.buildDuration = it.buildDuration
             cachePerformance.OS = os
-            buildsa.add(cachePerformance)
+            builds.add(cachePerformance)
         }
     }
 }

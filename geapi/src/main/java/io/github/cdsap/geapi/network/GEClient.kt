@@ -9,7 +9,6 @@ import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
-import kotlinx.coroutines.runBlocking
 
 class GEClient(private val token: String, geServer: String) {
     val client = createHttpClient()
@@ -29,7 +28,6 @@ class GEClient(private val token: String, geServer: String) {
     }
 
     suspend inline fun <reified T : Any> get(url: String): T {
-        val x = client.get(url).body() as T
-        return x
+        return client.get(url).body() as T
     }
 }

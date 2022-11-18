@@ -8,10 +8,8 @@ import io.github.cdsap.geapi.view.ExperimentResultView
 class ExperimentReport(val filter: Filter, val repository: GradleRepositoryImpl) : Report {
 
     override suspend fun process() {
-
         val buildScansFiltered = GetBuildScansWithQueryImpl(repository).get(filter)
         val buildsExperiment = FilterExperimentsImpl(repository).filter(buildScansFiltered, filter)
-
         ExperimentResultView().print(GetMeasurementsImpl(repository).get(buildsExperiment))
     }
 }

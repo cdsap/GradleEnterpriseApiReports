@@ -1,11 +1,13 @@
 package io.github.cdsap.geapi.domain.impl
 
-import com.jakewharton.picnic.TextAlignment
-import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.GetOutcomeReport
 import io.github.cdsap.geapi.domain.model.*
 import io.github.cdsap.geapi.progressbar.ProgressBar
 import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
 
 class GetOutcomeReportImpl(private val repository: GradleEnterpriseRepository) : GetOutcomeReport {
 
@@ -19,23 +21,31 @@ class GetOutcomeReportImpl(private val repository: GradleEnterpriseRepository) :
             val progressBar = ProgressBar()
             progressBar.update(0, builds.size)
             var i = 0
+            val semaphore = Semaphore(filter.concurrentCalls)
+            coroutineScope {
+                val runningTasks = builds.map {
+                    async {
+                        semaphore.acquire()
+                        val cachePerformance = repository.getBuildScanCachePerformance(it.id)
+                        val taskInfoList =
+                            if (filter.taskType == null) {
+                                cachePerformance.taskExecution.toList()
+                            } else {
+                                cachePerformance.taskExecution.filter { it.taskType == filter.taskType }
+                            }
 
-            builds.map {
-                val cachePerformance = repository.getBuildScanCachePerformance(it.id)
-                val taskInfoList =
-                    if (filter.taskType == null) {
-                        cachePerformance.taskExecution.toList()
-                    } else {
-                        cachePerformance.taskExecution.filter { it.taskType == filter.taskType }
+                        processByOutcome(taskInfoList, outcome.occurrencesByOutcome, outcome.durationByOutcome)
+                        processByOutcomeAndTask(
+                            taskInfoList,
+                            outcome.occurrencesByOutcomeAndTask,
+                            outcome.durationByOutcomeAndTask
+                        )
+                        progressBar.update(i++, builds.size)
+                        semaphore.release()
+                        taskInfoList
                     }
-
-                processByOutcome(taskInfoList, outcome.occurrencesByOutcome, outcome.durationByOutcome)
-                processByOutcomeAndTask(
-                    taskInfoList,
-                    outcome.occurrencesByOutcomeAndTask,
-                    outcome.durationByOutcomeAndTask
-                )
-                progressBar.update(i++, builds.size)
+                }
+                val x = runningTasks.awaitAll()
             }
         }
         return outcome

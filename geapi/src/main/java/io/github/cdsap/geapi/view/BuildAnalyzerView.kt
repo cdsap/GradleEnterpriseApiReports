@@ -75,31 +75,31 @@ class BuildAnalyzerView(private val builds: Array<ScanWithAttributes>) : View<Fi
     }
 
     private fun TableDsl.entry(
-        a: Map.Entry<String, List<ScanWithAttributes>>
+        buildsMap: Map.Entry<String, List<ScanWithAttributes>>
     ) {
-        if (a.key != null) {
+        if (buildsMap.key != null) {
             row {
-                val mean = a.value.sumOf { it.buildDuration } / a.value.size
-                cell(a.key.take(60))
-                cell(a.value.size) {
+                val mean = buildsMap.value.sumOf { it.buildDuration } / buildsMap.value.size
+                cell(buildsMap.key.take(60))
+                cell(buildsMap.value.size) {
                     alignment = TextAlignment.MiddleRight
                 }
-                cell(a.value.filter { it.tags.map { it.uppercase() }.contains("CI") }.count()) {
+                cell(buildsMap.value.filter { it.tags.map { it.uppercase() }.contains("CI") }.count()) {
                     alignment = TextAlignment.MiddleRight
                 }
-                cell(a.value.filter { it.tags.map { it.uppercase() }.contains("LOCAL") }.count()) {
+                cell(buildsMap.value.filter { it.tags.map { it.uppercase() }.contains("LOCAL") }.count()) {
                     alignment = TextAlignment.MiddleRight
                 }
                 cell(mean.toDuration(DurationUnit.MILLISECONDS)) {
                     alignment = TextAlignment.MiddleRight
                 }
-                percentiles(a)
+                percentiles(buildsMap)
             }
         }
     }
 
     private fun RowDsl.percentiles(it: Map.Entry<String, List<ScanWithAttributes>>) {
-        cell(it.value.map { it.buildDuration }.standardDeviation().toDuration(DurationUnit.MILLISECONDS).toRound(2)) {
+        cell(it.value.map { it.buildDuration }.standardDeviation().toDuration(DurationUnit.MILLISECONDS)) {
             alignment = TextAlignment.MiddleRight
         }
         cell(it.value.map { it.buildDuration }.percentile(25.0).toDuration(DurationUnit.MILLISECONDS)) {

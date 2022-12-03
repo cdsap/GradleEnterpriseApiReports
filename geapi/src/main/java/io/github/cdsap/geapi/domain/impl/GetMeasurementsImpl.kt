@@ -12,6 +12,7 @@ class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasu
         measurements.addAll(GetTaskMeasurements().get(builds))
         measurements.addAll(GetKotlinCompilerMeasurements().get(builds))
         measurements.addAll(GetJavaCompilerMeasurements().get(builds))
+        measurements.addAll(GetJasvaCompilerMeasurements().get(builds))
         return measurements
     }
 }

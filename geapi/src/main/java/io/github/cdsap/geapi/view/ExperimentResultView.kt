@@ -29,12 +29,12 @@ class ExperimentResultView
                 }.forEach {
                     row {
                         cell(it.key.name) {
-                            columnSpan = 5
+                            columnSpan = 4
                             alignment = TextAlignment.MiddleCenter
                         }
                     }
                     row {
-                        cell("Category")
+                 //       cell("Category")
                         cell("Metric")
                         cell("VARIANT A")
                         cell("VARIANT B")
@@ -44,7 +44,7 @@ class ExperimentResultView
                         it.diff() != ""
                     }.forEach {
                         row {
-                            cell(it.category)
+                     //       cell(it.category)
                             cell(it.name)
                             cell(it.variantA)
                             cell(it.variantB)

@@ -24,7 +24,7 @@ class GetGeneralMeasurements : GetMeasurements {
         variantBBuilds: List<Build>,
         os: OS
     ): List<Measurement> {
-        return listOf(
+        val generalMeasurements = mutableListOf(
             Measurement(
                 category = "General",
                 name = "Sample size",
@@ -53,8 +53,34 @@ class GetGeneralMeasurements : GetMeasurements {
                 variantA = variantABuilds.minBy { it.buildDuration }.buildDuration,
                 variantB = variantBBuilds.minBy { it.buildDuration }.buildDuration,
                 OS = os
+            ),
+            Measurement(
+                category = "General",
+                name = "Tasks per build",
+                variantA = variantABuilds[0].taskExecution.size,
+                variantB = variantBBuilds[0].taskExecution.size,
+                OS = os
             )
         )
+        val tasksOutcomeVariantA =
+            variantABuilds.drop(2).map { it.taskExecution.groupBy { it.avoidanceOutcome } }.flatMap { it.keys }
+        val tasksOutcomeVariantB =
+            variantBBuilds.drop(2).map { it.taskExecution.groupBy { it.avoidanceOutcome } }.flatMap { it.keys }
+        val outcome = (tasksOutcomeVariantA + tasksOutcomeVariantB).toSet()
+        outcome.forEach { outcome ->
+            generalMeasurements.add(Measurement(
+                category = "General",
+                name = "Tasks $outcome",
+                variantA = variantABuilds.sumOf {
+                    it.taskExecution.filter { it.avoidanceOutcome == outcome }.count()
+                } / (variantABuilds.size - 2),
+                variantB = variantBBuilds.sumOf {
+                    it.taskExecution.filter { it.avoidanceOutcome == outcome }.count()
+                } / (variantBBuilds.size - 2),
+                OS = os
+            ))
+        }
+        return generalMeasurements
 
     }
 }

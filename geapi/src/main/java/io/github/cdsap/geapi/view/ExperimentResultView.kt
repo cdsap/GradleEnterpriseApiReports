@@ -40,9 +40,7 @@ class ExperimentResultView
                         cell("VARIANT B")
                         cell("Delta")
                     }
-                    it.value.filter {
-                        it.diff() != ""
-                    }.forEach {
+                    it.value.forEach {
                         row {
                      //       cell(it.category)
                             cell(it.name)

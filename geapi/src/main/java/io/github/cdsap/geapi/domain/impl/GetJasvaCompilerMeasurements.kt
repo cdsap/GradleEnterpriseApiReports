@@ -45,23 +45,23 @@ class GetJasvaCompilerMeasurements : GetMeasurements {
                     OS = os
                 )
             )
-            measurements.add(
-                Measurement(
-                    category = "Tasks Compiler",
-                    name = "${task.taskType}  UP-TO-DATE",
-                    variantA = sumByOutcomeAndType(
-                        variantABuilds,
-                        "avoided_up_to_date",
-                        task.taskType
-                    ),
-                    variantB = sumByOutcomeAndType(
-                        variantBBuilds,
-                        "avoided_up_to_date",
-                        task.taskType
-                    ),
-                    OS = os
-                )
-            )
+//            measurements.add(
+//                Measurement(
+//                    category = "Tasks Compiler",
+//                    name = "${task.taskType}  UP-TO-DATE",
+//                    variantA = sumByOutcomeAndType(
+//                        variantABuilds,
+//                        "avoided_up_to_date",
+//                        task.taskType
+//                    ),
+//                    variantB = sumByOutcomeAndType(
+//                        variantBBuilds,
+//                        "avoided_up_to_date",
+//                        task.taskType
+//                    ),
+//                    OS = os
+//                )
+//            )
             measurements.add(
                 Measurement(
                     category = "Tasks Compiler",
@@ -77,25 +77,25 @@ class GetJasvaCompilerMeasurements : GetMeasurements {
                     OS = os
                 )
             )
-            measurements.add(
-                Measurement(
-                    category = "Tasks Compiler",
-                    name = "${task.taskType}  aggregated time",
-                    variantA =  variantABuilds.sumOf {
-                        it.taskExecution.filter {
-                            it.taskType == task.taskType
-                        }
-                            .sumOf { it.duration }
-                    },
-                    variantB =  variantBBuilds.sumOf {
-                        it.taskExecution.filter {
-                            it.taskType == task.taskType
-                        }
-                            .sumOf { it.duration }
-                    },
-                    OS = os
-                )
-            )
+//            measurements.add(
+//                Measurement(
+//                    category = "Tasks Compiler",
+//                    name = "${task.taskType}  aggregated time",
+//                    variantA =  variantABuilds.sumOf {
+//                        it.taskExecution.filter {
+//                            it.taskType == task.taskType
+//                        }
+//                            .sumOf { it.duration }
+//                    },
+//                    variantB =  variantBBuilds.sumOf {
+//                        it.taskExecution.filter {
+//                            it.taskType == task.taskType
+//                        }
+//                            .sumOf { it.duration }
+//                    },
+//                    OS = os
+//                )
+//            )
             measurements.add(
                 Measurement(
                     category = "Tasks Compiler",

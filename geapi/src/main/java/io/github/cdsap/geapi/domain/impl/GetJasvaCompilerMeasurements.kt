@@ -26,25 +26,25 @@ class GetJasvaCompilerMeasurements : GetMeasurements {
         val taskTypes = variantABuilds[0].taskExecution.distinctBy { it.taskType }
         val measurements = mutableListOf<Measurement>()
         taskTypes.forEach { task ->
-            measurements.add(
-                Measurement(
-                    category = "Tasks Compiler",
-                    name = task.taskType,
-                    variantA = variantABuilds.sumOf { build ->
-                        tasksByType(
-                            build,
-                            task.taskType
-                        ).count()
-                    },
-                    variantB = variantBBuilds.sumOf { build ->
-                        tasksByType(
-                            build,
-                            task.taskType
-                        ).count()
-                    },
-                    OS = os
-                )
-            )
+//            measurements.add(
+//                Measurement(
+//                    category = "Tasks Compiler",
+//                    name = task.taskType,
+//                    variantA = variantABuilds.sumOf { build ->
+//                        tasksByType(
+//                            build,
+//                            task.taskType
+//                        ).count()
+//                    },
+//                    variantB = variantBBuilds.sumOf { build ->
+//                        tasksByType(
+//                            build,
+//                            task.taskType
+//                        ).count()
+//                    },
+//                    OS = os
+//                )
+//            )
 //            measurements.add(
 //                Measurement(
 //                    category = "Tasks Compiler",
@@ -62,21 +62,21 @@ class GetJasvaCompilerMeasurements : GetMeasurements {
 //                    OS = os
 //                )
 //            )
-            measurements.add(
-                Measurement(
-                    category = "Tasks Compiler",
-                    name = "${task.taskType}  tasks Executed",
-                    variantA = variantABuilds.sumOf { build ->
-                        build.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == task.taskType }
-                            .count()
-                    },
-                    variantB = variantBBuilds.sumOf { build ->
-                        build.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == task.taskType }
-                            .count()
-                    },
-                    OS = os
-                )
-            )
+//            measurements.add(
+//                Measurement(
+//                    category = "Tasks Compiler",
+//                    name = "${task.taskType}  tasks Executed",
+//                    variantA = variantABuilds.sumOf { build ->
+//                        build.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == task.taskType }
+//                            .count()
+//                    },
+//                    variantB = variantBBuilds.sumOf { build ->
+//                        build.taskExecution.filter { (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable") && it.taskType == task.taskType }
+//                            .count()
+//                    },
+//                    OS = os
+//                )
+//            )
 //            measurements.add(
 //                Measurement(
 //                    category = "Tasks Compiler",

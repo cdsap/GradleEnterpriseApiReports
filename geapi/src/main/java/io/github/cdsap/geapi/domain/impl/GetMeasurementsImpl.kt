@@ -10,6 +10,7 @@ class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasu
         val measurements = mutableListOf<Measurement>()
         measurements.addAll(GetGeneralMeasurements().get(builds))
         measurements.addAll(GetTaskMeasurements().get(builds))
+        measurements.addAll(GetTasksMeasurements().get(builds))
         return measurements
     }
 }

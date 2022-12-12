@@ -7,6 +7,9 @@ import io.github.cdsap.geapi.domain.model.*
 class ExperimentResultView
     : View<List<Measurement>> {
 
+    private val LIMIT_DIFFERENCE_LONG = 1000L
+    private val LIMIT_DIFFERENCE_INT = 1000
+
     override fun print(measurement: List<Measurement>) {
 
         println(table {
@@ -29,28 +32,43 @@ class ExperimentResultView
                 }.forEach {
                     row {
                         cell(it.key.name) {
-                            columnSpan = 5
+                            columnSpan = 4
                             alignment = TextAlignment.MiddleCenter
                         }
                     }
                     row {
-                        cell("Category")
                         cell("Metric")
                         cell("VARIANT A")
                         cell("VARIANT B")
-                        cell("Delta")
+                        cell("Improvement")
                     }
-                    it.value.filter {
-                        it.diff() != ""
-                    }.forEach {
-                        row {
-                            cell(it.category)
-                            cell(it.name)
-                            cell(it.variantA)
-                            cell(it.variantB)
-                            cell(it.diff()) {
-                                alignment = TextAlignment.MiddleRight
+                    it.value.forEach {
+                        if (it.variantA is Long) {
+                            if (it.variantA > LIMIT_DIFFERENCE_LONG || (it.variantB as Long) > LIMIT_DIFFERENCE_LONG) {
+                                row {
+                                    cell(it.name)
+                                    cell(it.variantA)
+                                    cell(it.variantB)
+                                    cell(it.diff()) {
+                                        alignment = TextAlignment.MiddleRight
+                                    }
+                                }
                             }
+                        }
+                        if (it.variantA is Int) {
+                            if (it.variantA > LIMIT_DIFFERENCE_INT || (it.variantB as Int) > LIMIT_DIFFERENCE_INT) {
+                                row {
+
+                                    cell(it.name)
+                                    cell(it.variantA)
+                                    cell(it.variantB)
+                                    cell(it.diff()) {
+                                        alignment = TextAlignment.MiddleRight
+                                    }
+
+                                }
+                            }
+
                         }
                     }
                 }

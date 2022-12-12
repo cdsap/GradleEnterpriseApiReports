@@ -1,10 +1,7 @@
 package io.github.cdsap.geapi.domain.impl
 
 import io.github.cdsap.geapi.domain.GetMeasurements
-import io.github.cdsap.geapi.domain.model.Build
-import io.github.cdsap.geapi.domain.model.Experiment
-import io.github.cdsap.geapi.domain.model.Measurement
-import io.github.cdsap.geapi.domain.model.OS
+import io.github.cdsap.geapi.domain.model.*
 
 class GetTasksMeasurements : GetMeasurements {
 
@@ -27,53 +24,29 @@ class GetTasksMeasurements : GetMeasurements {
         val measurements = mutableListOf<Measurement>()
         taskTypes.forEach { task ->
 
-            val sumVarianA = variantABuilds.sumOf {
-                it.taskExecution.filter {
-                    (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
-                        && it.taskType == task.taskType
-                }
+            val sumVariantA = variantABuilds.sumOf {
+                filterByExecutionAndType(it, task)
                     .sumOf { it.duration }
             }
             var process = true
-            if (sumVarianA is Long) {
-                if (sumVarianA == 0L) {
-                    process = false
-                }
+
+            if (sumVariantA < 2000L) {
+                process = false
             }
 
             if (process) {
                 measurements.add(
                     Measurement(
                         category = "Tasks Compiler",
-                        name = "${task.taskType}  mean task execution",
+                        name = task.taskType,
                         variantA = variantABuilds.sumOf {
-                            it.taskExecution.filter {
-                                (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
-                                    && it.taskType == task.taskType
-                            }
+                            filterByExecutionAndType(it, task)
                                 .sumOf { it.duration }
-                        } / (
-                            variantABuilds.sumOf {
-                                it.taskExecution.filter {
-                                    (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
-                                        && it.taskType == task.taskType
-                                }
-                                    .count()
-                            }),
+                        } ,
                         variantB = variantBBuilds.sumOf {
-                            it.taskExecution.filter {
-                                (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
-                                    && it.taskType == task.taskType
-                            }
+                            filterByExecutionAndType(it, task)
                                 .sumOf { it.duration }
-                        } / (
-                            variantBBuilds.sumOf {
-                                it.taskExecution.filter {
-                                    (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
-                                        && it.taskType == task.taskType
-                                }
-                                    .count()
-                            }),
+                        },
                         OS = os
                     )
                 )
@@ -83,4 +56,11 @@ class GetTasksMeasurements : GetMeasurements {
 
     }
 
+    private fun filterByExecutionAndType(
+        it: Build,
+        task: Task
+    ) = it.taskExecution.filter {
+        (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
+            && it.taskType == task.taskType
+    }
 }

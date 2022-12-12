@@ -22,7 +22,7 @@ class ExperimentResultView
             body {
                 row {
                     cell("Experiment") {
-                        columnSpan = 5
+                        columnSpan = 4
                         alignment = TextAlignment.MiddleCenter
                     }
                 }
@@ -44,7 +44,7 @@ class ExperimentResultView
                     }
                     it.value.forEach {
                         if (it.variantA is Long) {
-                            if (it.variantA > LIMIT_DIFFERENCE_LONG || (it.variantB as Long) > LIMIT_DIFFERENCE_LONG) {
+
                                 row {
                                     cell(it.name)
                                     cell(it.variantA)
@@ -53,12 +53,10 @@ class ExperimentResultView
                                         alignment = TextAlignment.MiddleRight
                                     }
                                 }
-                            }
+
                         }
                         if (it.variantA is Int) {
-                            if (it.variantA > LIMIT_DIFFERENCE_INT || (it.variantB as Int) > LIMIT_DIFFERENCE_INT) {
                                 row {
-
                                     cell(it.name)
                                     cell(it.variantA)
                                     cell(it.variantB)
@@ -68,8 +66,6 @@ class ExperimentResultView
 
                                 }
                             }
-
-                        }
                     }
                 }
             }

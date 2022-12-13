@@ -52,6 +52,7 @@ class GetTasksMeasurements : GetMeasurements {
                 )
             }
         }
+        measurements.sortBy { it.name }
         return measurements
 
     }

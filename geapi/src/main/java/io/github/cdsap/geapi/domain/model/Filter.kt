@@ -33,7 +33,7 @@ data class Filter(
         val cal: Calendar = Calendar.getInstance()
         if (experimentId != null) {
             cal.time = Date()
-            cal.add(Calendar.HOUR, -3)
+            cal.add(Calendar.HOUR, -1)
             return cal.timeInMillis
         } else {
 

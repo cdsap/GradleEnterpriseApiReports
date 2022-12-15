@@ -20,17 +20,22 @@ class GetTasksMeasurements : GetMeasurements {
         variantBBuilds: List<Build>,
         os: OS
     ): List<Measurement> {
-        val taskTypes = variantABuilds[0].taskExecution.distinctBy { it.taskType }
+        val taskTypes = variantABuilds[0].taskExecution.filter {
+            (it.avoidanceOutcome == "executed_cacheable" || it.avoidanceOutcome == "executed_not_cacheable")
+        }.distinctBy { it.taskType }
         val measurements = mutableListOf<Measurement>()
         taskTypes.forEach { task ->
 
             val sumVariantA = variantABuilds.sumOf {
                 filterByExecutionAndType(it, task)
                     .sumOf { it.duration }
+            } / variantABuilds.sumOf {
+                filterByExecutionAndType(it, task)
+                    .count()
             }
             var process = true
 
-            if (sumVariantA < 2000L) {
+            if (sumVariantA < 300L) {
                 process = false
             }
 
@@ -42,11 +47,19 @@ class GetTasksMeasurements : GetMeasurements {
                         variantA = variantABuilds.sumOf {
                             filterByExecutionAndType(it, task)
                                 .sumOf { it.duration }
-                        } ,
+                        } /
+                            variantABuilds.sumOf {
+                                filterByExecutionAndType(it, task)
+                                    .count()
+                            },
                         variantB = variantBBuilds.sumOf {
                             filterByExecutionAndType(it, task)
                                 .sumOf { it.duration }
-                        },
+                        } /
+                            variantBBuilds.sumOf {
+                                filterByExecutionAndType(it, task)
+                                    .count()
+                            },
                         OS = os
                     )
                 )

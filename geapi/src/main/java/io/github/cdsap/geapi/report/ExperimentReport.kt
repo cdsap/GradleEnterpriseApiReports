@@ -10,7 +10,8 @@ class ExperimentReport(val filter: Filter, val repository: GradleRepositoryImpl)
     override suspend fun process() {
         val buildScansFiltered = GetBuildScansWithQueryImpl(repository).get(filter)
         val buildsExperiment = FilterExperimentsImpl(repository).filter(buildScansFiltered, filter)
-        ExperimentResultView().print(GetMeasurementsImpl(repository).get(buildsExperiment))
+
+        ExperimentResultView(filter.experimentOutput).print(GetMeasurementsImpl(repository).get(buildsExperiment))
     }
 }
 

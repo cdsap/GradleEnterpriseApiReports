@@ -12,12 +12,14 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
+import io.github.cdsap.geapi.domain.model.ExperimentOutput
 import io.github.cdsap.geapi.domain.model.Filter
 import io.github.cdsap.geapi.network.GEClient
 import io.github.cdsap.geapi.report.*
 import io.github.cdsap.geapi.repository.impl.GradleRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import java.io.FileNotFoundException
+import java.util.*
 
 fun main(args: Array<String>) {
     GEApi().main(args)
@@ -43,6 +45,7 @@ class GEApi : CliktCommand() {
     private val type by option().help(" Task type used by the TaskOutcome report, example: org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
     private val buildSupportFile by option().file()
     private val concurrentCalls by option().int().default(10)
+    private val experimentOutput by option().choice("console","file").default("console")
 
     private val task: String? by option().help("[Optional] Task used for filter build scans. In the TaskOutcome report we may want to search only in specific builds, example: assembleDebug")
     private val user: String? by option()
@@ -61,7 +64,12 @@ class GEApi : CliktCommand() {
             initFilter = System.currentTimeMillis(),
             user = user,
             experimentId = experimentId,
-            concurrentCalls = concurrentCalls
+            concurrentCalls = concurrentCalls,
+            experimentOutput = ExperimentOutput.valueOf(experimentOutput.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            })
         )
         val repository = GradleRepositoryImpl(GEClient(apiKey, url))
 

@@ -19,7 +19,8 @@ data class Filter(
     val user: String? = null,
     val experimentId: String? = null,
     val buildSystem: String = "gradle",
-    val concurrentCalls: Int
+    val concurrentCalls: Int,
+    val experimentOutput: ExperimentOutput = ExperimentOutput.CONSOLE
 ) {
     init {
         range = if (sinceBuildId == null) {
@@ -45,4 +46,8 @@ data class Filter(
             return cal.timeInMillis
         }
     }
+}
+enum class ExperimentOutput{
+    FILE,
+    CONSOLE
 }

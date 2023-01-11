@@ -3,16 +3,28 @@ package io.github.cdsap.geapi.view
 import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.model.*
+import java.io.File
 
-class ExperimentResultView
-    : View<List<Measurement>> {
+class ExperimentResultView(val experimentOutput: ExperimentOutput) : View<List<Measurement>> {
 
     private val LIMIT_DIFFERENCE_LONG = 1000L
     private val LIMIT_DIFFERENCE_INT = 1000
 
     override fun print(measurement: List<Measurement>) {
+        when (experimentOutput) {
+            ExperimentOutput.CONSOLE -> {
+                println(generateTable(measurement))
+            }
+            ExperimentOutput.FILE -> {
+                File("results_experiment").writeText(generateTable(measurement).toString())
+            }
 
-        println(table {
+        }
+        println(generateTable(measurement))
+    }
+
+    private fun generateTable(measurement: List<Measurement>) =
+        table {
             cellStyle {
                 border = true
                 alignment = TextAlignment.MiddleLeft
@@ -45,31 +57,30 @@ class ExperimentResultView
                     it.value.forEach {
                         if (it.variantA is Long) {
 
-                                row {
-                                    cell(it.name)
-                                    cell(it.variantA)
-                                    cell(it.variantB)
-                                    cell(it.diff()) {
-                                        alignment = TextAlignment.MiddleRight
-                                    }
+                            row {
+                                cell(it.name)
+                                cell(it.variantA)
+                                cell(it.variantB)
+                                cell(it.diff()) {
+                                    alignment = TextAlignment.MiddleRight
                                 }
+                            }
 
                         }
                         if (it.variantA is Int) {
-                                row {
-                                    cell(it.name)
-                                    cell(it.variantA)
-                                    cell(it.variantB)
-                                    cell(it.diff()) {
-                                        alignment = TextAlignment.MiddleRight
-                                    }
-
+                            row {
+                                cell(it.name)
+                                cell(it.variantA)
+                                cell(it.variantB)
+                                cell(it.diff()) {
+                                    alignment = TextAlignment.MiddleRight
                                 }
+
                             }
+                        }
                     }
                 }
             }
-        })
-    }
+        }
 }
 

@@ -20,7 +20,7 @@ data class Filter(
     val experimentId: String? = null,
     val buildSystem: String = "gradle",
     val concurrentCalls: Int,
-    val experimentOutput: ExperimentOutput = ExperimentOutput.CONSOLE
+    val experimentOutput: ExperimentOutput = ExperimentOutput.Console
 ) {
     init {
         range = if (sinceBuildId == null) {
@@ -48,6 +48,6 @@ data class Filter(
     }
 }
 enum class ExperimentOutput{
-    FILE,
-    CONSOLE
+    File,
+    Console
 }

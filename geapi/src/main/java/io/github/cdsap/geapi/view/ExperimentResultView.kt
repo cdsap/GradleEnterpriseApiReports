@@ -5,17 +5,17 @@ import com.jakewharton.picnic.table
 import io.github.cdsap.geapi.domain.model.*
 import java.io.File
 
-class ExperimentResultView(val experimentOutput: ExperimentOutput) : View<List<Measurement>> {
+class ExperimentResultView(private val experimentOutput: ExperimentOutput) : View<List<Measurement>> {
 
     private val LIMIT_DIFFERENCE_LONG = 1000L
     private val LIMIT_DIFFERENCE_INT = 1000
 
     override fun print(measurement: List<Measurement>) {
         when (experimentOutput) {
-            ExperimentOutput.CONSOLE -> {
+            ExperimentOutput.Console -> {
                 println(generateTable(measurement))
             }
-            ExperimentOutput.FILE -> {
+            ExperimentOutput.File -> {
                 File("results_experiment").writeText(generateTable(measurement).toString())
             }
 

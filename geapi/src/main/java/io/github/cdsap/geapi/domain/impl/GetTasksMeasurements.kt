@@ -35,7 +35,7 @@ class GetTasksMeasurements : GetMeasurements {
             }
             var process = true
 
-            if (sumVariantA < 300L) {
+            if (sumVariantA < 100L) {
                 process = false
             }
 

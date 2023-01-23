@@ -15,8 +15,9 @@ class ExperimentResultView(private val experimentOutput: ExperimentOutput) : Vie
             ExperimentOutput.Console -> {
                 println(generateTable(measurement))
             }
+
             ExperimentOutput.File -> {
-                File("results_experiment").writeText(generateTable(measurement).toString())
+                File("results_experiment").writeText(generateHtmlTable(measurement))
             }
 
         }
@@ -82,5 +83,28 @@ class ExperimentResultView(private val experimentOutput: ExperimentOutput) : Vie
                 }
             }
         }
+
+    private fun generateHtmlTable(measurement: List<Measurement>): String {
+        var output = ""
+        output += "<table><tr><td colspan=4>Experiment</td></tr>"
+        output += "<tr><td>Metric</td><td>VARIANT A</td><td>VARIANT B</td><td>Improvement</td></tr>"
+
+        measurement.groupBy {
+            it.OS
+        }.forEach {
+            it.value.forEach {
+                if (it.variantA is Long) {
+                    output += "<tr><td>${it.name}</td><td>${it.variantA}</td><td>${it.variantB}</td><td>${it.diff()}</td></tr>"
+
+                }
+                if (it.variantA is Int) {
+                    output += "<tr><td>${it.name}</td><td>${it.variantA}</td><td>${it.variantB}</td><td>${it.diff()}</td></tr>"
+                }
+            }
+        }
+        output += "</table>"
+        return output
+    }
 }
+
 

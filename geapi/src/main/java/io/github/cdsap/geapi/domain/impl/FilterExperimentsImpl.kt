@@ -11,6 +11,7 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
             throw IllegalArgumentException("Variants can not be null")
         }
         val variants = filter.variants.split(";")
+        println(filter.variants)
         println("xxxx")
         println(variants)
         val variantA = variants[0]

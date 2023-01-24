@@ -10,7 +10,7 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
         if (filter.variants == null) {
             throw IllegalArgumentException("Variants can not be null")
         }
-        val variants = filter.variants.split(";")
+        val variants = filter.variants.split(",")
         println(filter.variants)
         println("inakie")
         println("xxxx")

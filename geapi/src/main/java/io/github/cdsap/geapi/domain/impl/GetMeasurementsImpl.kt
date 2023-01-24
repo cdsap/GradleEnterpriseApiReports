@@ -6,7 +6,6 @@ import io.github.cdsap.geapi.repository.GradleEnterpriseRepository
 
 class GetMeasurementsImpl(val repository: GradleEnterpriseRepository) : GetMeasurements {
     override fun get(builds: List<Build>): List<Measurement> {
-
         val measurements = mutableListOf<Measurement>()
         measurements.addAll(GetTasksMeasurements().get(builds))
         return measurements

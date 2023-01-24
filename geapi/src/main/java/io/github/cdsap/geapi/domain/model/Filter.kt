@@ -20,7 +20,8 @@ data class Filter(
     val experimentId: String? = null,
     val buildSystem: String = "gradle",
     val concurrentCalls: Int,
-    val experimentOutput: ExperimentOutput = ExperimentOutput.Console
+    val experimentOutput: ExperimentOutput = ExperimentOutput.Console,
+    val variants: String? = null
 ) {
     init {
         range = if (sinceBuildId == null) {

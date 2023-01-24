@@ -49,6 +49,7 @@ class GEApi : CliktCommand() {
 
     private val task: String? by option().help("[Optional] Task used for filter build scans. In the TaskOutcome report we may want to search only in specific builds, example: assembleDebug")
     private val user: String? by option()
+    private val variants: String? by option()
 
     override fun run() {
         val filter = Filter(
@@ -69,7 +70,8 @@ class GEApi : CliktCommand() {
                 if (it.isLowerCase()) it.titlecase(
                     Locale.getDefault()
                 ) else it.toString()
-            })
+            }),
+            variants = variants
         )
         val repository = GradleRepositoryImpl(GEClient(apiKey, url))
 

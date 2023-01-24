@@ -15,8 +15,8 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
         println("inakie")
         println("xxxx")
         println(variants)
-        val variantA = variants[0]
-        val variantB = variants[1]
+        val variantA = variants[0].trim()
+        val variantB = variants[1].trim()
         if (builds.isNotEmpty()) {
             println("Processing build scan cache performance")
 

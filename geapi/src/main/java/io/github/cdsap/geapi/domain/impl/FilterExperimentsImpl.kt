@@ -12,6 +12,7 @@ class FilterExperimentsImpl(val repository: GradleEnterpriseRepository) : Filter
         }
         val variants = filter.variants.split(";")
         println(filter.variants)
+        println("inakie")
         println("xxxx")
         println(variants)
         val variantA = variants[0]
